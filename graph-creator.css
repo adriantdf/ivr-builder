@@ -1,0 +1,159 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+p {
+  text-align: center;
+  overflow: overlay;
+  position: relative;
+}
+
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: rgb(248, 248, 248)
+}
+
+#toolbox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border: 2px solid #EEEEEE;
+  border-radius: 5px;
+  padding: 1em;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#toolbox i {
+  font-size: 50px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#toolbox i:last-child {
+  margin-bottom: 0;
+}
+
+.conceptG text {
+  pointer-events: none;
+}
+
+marker {
+  fill: #333;
+}
+
+g.conceptG circle {
+  fill: #F6FBFF;
+  stroke: #333;
+  stroke-width: 2px;
+}
+
+.circle_node:hover {
+  fill: rgb(200, 238, 241);
+  cursor: pointer;
+}
+
+g.conceptG .delete {
+  transition: stroke .2s;
+}
+
+g.conceptG .delete:hover {
+  stroke: #cf2929;
+}
+
+g.conceptG .delete+text {
+  transition: fill .2s;
+}
+
+g.conceptG .delete:hover+text {
+  fill: #cf2929;
+}
+
+g.conceptG .delete:hover {
+  cursor: pointer;
+}
+
+g.selected circle {
+  fill: rgb(250, 232, 255);
+}
+
+g.selected:hover circle {
+  fill: rgb(250, 232, 255);
+}
+
+path.link {
+  fill: none;
+  stroke: #333;
+  stroke-width: 2px;
+  cursor: default;
+}
+
+path.link:hover {
+  stroke: rgb(94, 196, 204);
+}
+
+g.connect-node circle {
+  fill: #BEFFFF;
+}
+
+path.link.hidden {
+  stroke-width: 0;
+}
+
+path.link.selected {
+  stroke: rgb(229, 172, 247);
+}
+
+.draggable {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  border: 1px solid #d3d3d3;
+  text-align: center;
+  width: 150px;
+  cursor: move;
+}
+
+#right_sidebar {
+  width: 300px;
+  overflow: hidden;
+  background: #EEEEEE;
+  -webkit-transition: right 0.3s;
+  -moz-transition: right 0.3s;
+  -ms-transition: right 0.3s;
+  -o-transition: right 0.3s;
+  transition: right 0.3s;
+  position: fixed;
+  right: -320px;
+  height: 100vh;
+  border-left: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+#right_sidebar.open {
+  right: 0;
+}
+
+#right_sidebar i {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+#right_sidebar a {
+  cursor: pointer;
+  font-size: 20px;
+  text-transform: uppercase;
+  color: black;
+  margin-top: 10px;
+}
