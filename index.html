@@ -2,26 +2,28 @@
 <html>
 
 <head>
+  <meta charset="utf-8" />
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
   <link rel="stylesheet" href="graph-creator.css" />
 </head>
 
 <body>
+<div id="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
 
-  <div id="toolbox">
-    <i class="fa fa-th"></i>
-    <i class="fa fa-exchange"></i>
-    <i class="fa fa-microphone"></i>
-    <i class="fa fa-phone"></i>
-    <i class="fa fa-envelope"></i>
-    <i class="fa fa-at"></i>
+  <div id="toolbox" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <i draggable="true" ondragstart="drag(event)" class="fa fa-th" id="dialpad-node" name="dialpad"></i>
+    <i draggable="true" ondragstart="drag(event)" class="fa fa-exchange" id="transfer-node" name="transfer"></i>
+    <i draggable="true" ondragstart="drag(event)" class="fa fa-microphone" id="record-node" name="record"></i>
+    <i draggable="true" ondragstart="drag(event)" class="fa fa-phone" id="call-node" name="call"></i>
+    <i draggable="true" ondragstart="drag(event)" class="fa fa-envelope" id="sms-node" name="sms"></i>
+    <i draggable="true" ondragstart="drag(event)" class="fa fa-at" id="email-node" name="email"></i>
   </div>
   <div id="right_sidebar">
     <i class="fa fa-times" aria-hidden="true" onclick="closeSidebar()"></i>
     <ul>
       <li><a href="#" id="deleteNode">Delete</a></li>
     </ul>
-</div>
+  </div>
 
   <script src="//d3js.org/d3.v3.js" charset="utf-8"></script>
   <script src="graph-creator.js"></script>

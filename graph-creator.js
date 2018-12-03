@@ -56,8 +56,8 @@
       // .style('marker-end', 'url(#mark-end-arrow)');
 
     // svg nodes and edges 
-    thisGraph.paths = svgG.append("g").selectAll("g");
-    thisGraph.circles = svgG.append("g").selectAll("g");
+    thisGraph.paths = svgG.append("g").attr('id', 'paths_container').selectAll("g");
+    thisGraph.circles = svgG.append("g").attr('id', 'nodes_container').selectAll("g");
 
     thisGraph.drag = d3.behavior.drag()
       .origin(function (d) {
@@ -108,7 +108,7 @@
     // listen for resize
     window.onresize = function () { thisGraph.updateWindow(svg); };
   };
-
+  
   GraphCreator.prototype.setIdCt = function (idct) {
     this.idct = idct;
   };
@@ -116,7 +116,7 @@
   GraphCreator.prototype.consts = {
     selectedClass: "selected",
     connectClass: "connect-node",
-    circleGClass: "conceptG",
+    circleGClass: "node",
     graphClass: "graph",
     activeEditId: "active-editing",
     BACKSPACE_KEY: 8,
@@ -184,7 +184,7 @@
     thisGraph.state.selectedEdge = edgeData;
   };
 
-  GraphCreator.prototype.replaceSelectNode = function (d3Node, nodeData) {
+  GraphCreator.prototype.replaceSelectNode = function (d3Node, nodeData) { // select node
     var thisGraph = this;
     const sidebar = document.getElementById('right_sidebar');
     d3Node.classed(this.consts.selectedClass, true);
@@ -231,10 +231,8 @@
       thisGraph.removeSelectFromEdge();
     }
   };
-
   // mousedown on node
-  GraphCreator.prototype.circleMouseDown = function (d3node, d) {
-    
+  GraphCreator.prototype.circleMouseDown = function (d3node, d) {    
     var thisGraph = this,
       state = thisGraph.state;
       
@@ -248,6 +246,7 @@
       return;
     }
   };
+
 
   /* place editable text on node in place of svg text */
   GraphCreator.prototype.changeTextOfNode = function (d3node, d) {
@@ -355,24 +354,27 @@
   };
 
   // mouseup on main svg
-  GraphCreator.prototype.svgMouseUp = function () {
+    GraphCreator.prototype.svgMouseUp = function () {
+    
     var thisGraph = this,
       state = thisGraph.state;
     if (state.justScaleTransGraph) {
       // dragged not clicked
       state.justScaleTransGraph = false;
-    } else if (state.graphMouseDown && d3.event.shiftKey) {
-      
+    } else if (state.graphMouseDown && d3.event.shiftKey) { // create new node
+
       // clicked not dragged from svg
       var xycoords = d3.mouse(thisGraph.svgG.node()),
         d = { id: thisGraph.idct++, title: "new node", x: xycoords[0], y: xycoords[1] };
       thisGraph.nodes.push(d);
       thisGraph.updateGraph();
+      
       // make title of text immediently editable
       var d3txt = thisGraph.changeTextOfNode(thisGraph.circles.filter(function (dval) {
         return dval.id === d.id;
       }), d),
         txtNode = d3txt.node();
+        
       thisGraph.selectElementContents(txtNode);
       txtNode.focus();
     } else if (state.shiftNodeDrag) {
@@ -384,6 +386,7 @@
   };
   // keydown on main svg
   GraphCreator.prototype.svgKeyDown = function () {
+    
     var thisGraph = this,
       state = thisGraph.state,
       consts = thisGraph.consts;
@@ -418,7 +421,7 @@
 
   // call to propagate changes to graph
   GraphCreator.prototype.updateGraph = function () {
-
+    
     var thisGraph = this,
       consts = thisGraph.consts;
     var state = thisGraph.state;
@@ -499,19 +502,6 @@
 
     newGs.append("circle")
       .attr("r", String(consts.nodeRadius)).attr("class", "circle_node");
-    newGs.select('.delete').on("click", ()=> {
-      d3.event.preventDefault();
-      if (thisGraph.state.selectedNode) {
-        thisGraph.nodes.splice(thisGraph.nodes.indexOf(thisGraph.state.selectedNode), 1);
-        thisGraph.spliceLinksForNode(thisGraph.state.selectedNode);
-        thisGraph.state.selectedNode = null;
-        thisGraph.updateGraph();
-      } else if (selectedEdge) {
-        thisGraph.edges.splice(thisGraph.edges.indexOf(selectedEdge), 1);
-        state.selectedEdge = null;
-        thisGraph.updateGraph();
-      }
-    });
 
     newGs.each(function (d) {
       thisGraph.insertTitleLinebreaks(d3.select(this), d.title);
@@ -563,7 +553,7 @@
   // initial node data
   var nodes = [{ title: "new node", id: 0, x: xLoc, y: yLoc },
   { title: "new node", id: 1, x: xLoc, y: yLoc + 200 }];
-  var edges = [{ source: nodes[1], target: nodes[0] }];
+  var edges = [];
 
 
   /** MAIN SVG **/
@@ -573,6 +563,7 @@
   var graph = new GraphCreator(svg, nodes, edges);
   graph.setIdCt(2);
   graph.updateGraph();
+  
 // })(window.d3, window.saveAs, window.Blob);
 
 
@@ -627,5 +618,43 @@ function deleteNode(thisGraph) {
     thisGraph.edges.splice(thisGraph.edges.indexOf(selectedEdge), 1);
     state.selectedEdge = null;
     thisGraph.updateGraph();
-  } 
+  }
+}
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+  document.getElementById('drop-zone').style.opacity = 1;
+  document.getElementById('drop-zone').style.display = 'block';
+  
+  var child = ev.target;
+  var parent = child.parentNode;
+  var index = Array.prototype.indexOf.call(parent.children, child);
+  ev.dataTransfer.setData("target_id", index);
+}
+
+function drop(ev) {
+  console.log('drop');
+  ev.preventDefault();
+  const data = ev.dataTransfer.getData("text");
+  const target_id = ev.dataTransfer.getData("target_id");
+  ev.target.appendChild(document.getElementById(data));
+  document.getElementById('drop-zone').style.opacity = 0;
+  document.getElementById('drop-zone').style.display = 'none';
+
+  const target = ev.target.firstElementChild;
+  const toolbox = document.getElementById('toolbox');
+  
+  toolbox.insertBefore(target, toolbox.children[target_id]); // clone the dragged icon at the same position
+
+  let nodeLastIndex;
+  graph.nodes.forEach(el => {
+    nodeLastIndex = el.id;
+  });
+  console.log(target.attributes.name);
+  
+  graph.nodes.push({ title: target.attributes.name.nodeValue, id: nodeLastIndex + 1, x: ev.clientX, y: ev.clientY });
+  graph.updateGraph();
 }

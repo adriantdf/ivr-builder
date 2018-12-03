@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -31,6 +35,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 11;
 }
 
 #toolbox i {
@@ -43,7 +48,7 @@ body {
   margin-bottom: 0;
 }
 
-.conceptG text {
+.node text {
   pointer-events: none;
 }
 
@@ -51,7 +56,7 @@ marker {
   fill: #333;
 }
 
-g.conceptG circle {
+g.node circle {
   fill: #F6FBFF;
   stroke: #333;
   stroke-width: 2px;
@@ -62,23 +67,23 @@ g.conceptG circle {
   cursor: pointer;
 }
 
-g.conceptG .delete {
+g.node .delete {
   transition: stroke .2s;
 }
 
-g.conceptG .delete:hover {
+g.node .delete:hover {
   stroke: #cf2929;
 }
 
-g.conceptG .delete+text {
+g.node .delete+text {
   transition: fill .2s;
 }
 
-g.conceptG .delete:hover+text {
+g.node .delete:hover+text {
   fill: #cf2929;
 }
 
-g.conceptG .delete:hover {
+g.node .delete:hover {
   cursor: pointer;
 }
 
@@ -157,3 +162,28 @@ path.link.selected {
   color: black;
   margin-top: 10px;
 }
+
+#drop-zone {
+  border: 2px solid red;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  opacity: 0;
+  display: none;
+  transition: opacity .2s;
+}
+
+#drop-zone p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-size: 20px;
+  color: grey;
+}
+
